@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Gerador de Contrato</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <style>
+        :root {
+            --accent: #f07f1a;
+            --dark: #111
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f6f8;
+            color: #222
+        }
+
+        .app {
+            max-width: 1100px;
+            margin: 20px auto;
+            padding: 18px
+        }
+
+        .layout {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start
+        }
+
+        form.panel {
+            width: 380px;
+            background: #fff;
+            padding: 28px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .08)
+        }
+
+        .preview {
+            flex: 1;
+            background: #fff;
+            padding: 18px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .08)
+        }
+
+        h2 {
+            margin: 0 0 12px 0;
+            font-size: 18px
+        }
+
+        label {
+            display: block;
+            font-weight: 700;
+            margin-top: 10px;
+            font-size: 13px
+        }
+
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select,
+        input[type="date"] {
+            width: 95%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            margin-top: 6px;
+            font-size: 14px
+        }
+
+        textarea {
+            height: 40px;
+            resize: none
+        }
+
+        .row {
+            display: flex;
+            gap: 8px
+        }
+
+        .row>* {
+            flex: 1
+        }
+
+        button {
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            padding: 10px 12px;
+            border-radius: 20px;
+            cursor: pointer
+        }
+
+        button.secondary {
+            background: #666
+        }
+
+        .items {
+            margin-top: 10px
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse
+        }
+
+        table th,
+        table td {
+            font-size: 13px;
+            padding: 6px;
+            border-bottom: 1px solid #eee;
+            text-align: left;
+            vertical-align: top
+        }
+
+        .muted {
+            color: #666;
+            font-size: 13px
+        }
+
+        .contract {
+            background: #fff;
+            padding: 18px;
+            color: #111;
+            border: 1px solid #ddd;
+            position: relative;
+            overflow: hidden
+        }
+
+        #previewContractDate {
+            text-align: center;
+            margin-bottom: 2px;
+            font-size: 12px;
+            font-weight: bold;
+            /* aproxima do texto abaixo */
+        }
+
+        footer.note {
+            text-align: center;
+            margin-top: 0;
+            /* elimina o espaço extra */
+            font-size: 10px;
+            /* opcional: deixa menor e mais sutil */
+            color: #666;
+            /* mantém o tom discreto */
+        }
+
+
+        .contract .header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 12px;
+            margin-bottom: 10px
+        }
+
+        .logoBox {
+            width: 240px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center
+        }
+
+        .companyData {
+            font-size: 12px
+        }
+
+        .contract h1 {
+            font-size: 18px;
+            margin: 10px 0;
+            text-align: center;
+            text-decoration: underline
+        }
+
+        .section {
+            margin: 10px 0;
+            font-size: 14px
+        }
+
+        .section.pagamento p {
+            line-height: 1.2;
+            margin-top: 0;
+        }
+
+
+        .itemsTable {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px
+        }
+
+        .itemsTable th,
+        .itemsTable td {
+            border: 1px solid #ccc;
+            padding: 6px;
+            font-size: 13px
+        }
+
+        .totals {
+            font-size: 16px;
+            margin-top: 8px;
+            font-weight: 700;
+            text-align: right
+        }
+
+        .sign {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 32px
+        }
+
+        .sign .line {
+            width: 40%;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .sign .strong {
+            margin-bottom: 2px;
+        }
+
+        .small {
+            font-size: 12px;
+            color: #444
+        }
+
+        footer.note {
+            font-size: 10px;
+            color: #666;
+            margin-top: 12px
+        }
+
+        .topButtons {
+            display: flex;
+            gap: 8px;
+            justify-content: space-between;
+            margin-bottom: 12px
+        }
+
+        .muted-small {
+            font-size: 12px;
+            color: #666
+        }
+
+        .left-info {
+            text-align: left;
+            margin-top: 10px
+        }
+
+        #watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-25%, -10%) rotate(-0deg);
+            opacity: 0.12;
+            width: 70%;
+            height: auto;
+            z-index: 0;
+            pointer-events: none
+        }
+
+        .contract *:not(#watermark) {
+            position: relative;
+            z-index: 1
+        }
+
+        .small-text {
+            font-size: 12px;
+            text-align: left;
+            margin-top: 8px
+        }
+
+        /* Impede quebra de página dentro do bloco de FORO DO CONTRATO */
+        .section.small.no-break {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+
+        @media print {
+            body {
+                background: white
+            }
+
+            .app {
+                max-width: 100%;
+                margin: 0;
+                padding: 0
+            }
+
+            .layout {
+                flex-direction: column
+            }
+
+            form.panel,
+            .topButtons {
+                display: none
+            }
+
+            .contract {
+                border: none;
+                padding: 0
+            }
+        }
+
+        .preview-images {
+            margin: 12px 0 18px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
+            align-items: flex-start
+        }
+
+        @media (max-width:800px) {
+            .preview-images img {
+                max-width: 48%
+            }
+        }
+
+        @media (max-width:480px) {
+            .preview-images img {
+                max-width: 100%
+            }
+        }
+
+        .small-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app">
+        <div class="topButtons">
+            <div class="muted-small">Gerador de Contrato — personalize e exporte em PDF</div>
+            <div>
+                <button id="btnPrint">Exportar / Salvar PDF</button>
+                <button id="btnReset" class="secondary">Limpar formulário</button>
+            </div>
+        </div>
+
+        <div class="layout">
+            <!-- FORM -->
+            <form class="panel" id="form">
+                <h2>Dados do Contrato</h2>
+
+                <label>Unidade emissora</label>
+                <select id="unitLocation">
+                    <option value="Rio Verde – Goiás" data-name="SOUZA E CAVALCATE ACM E VIDRO LTDA"
+                        data-cnpj="62.252.910/0001-19"
+                        data-address="Rua Santinho Veloso, Q32 LT012 ST - St. Pauzanes, Rio Verde - GO"
+                        data-contact="(64) 99268-8158 • reidoacmrv@gmail.com">Rio Verde – Goiás (Matriz)</option>
+                    <option value="Quirinópolis – Goiás" data-name="SOUZA FARIA ACM QUIN" data-cnpj="00.000.000/0001-00"
+                        data-address="Endereço da filial, Quirinópolis - GO"
+                        data-contact="(64) 9xxxx-xxxx • filial@empresa.com">Quirinópolis – Goiás (Filial)</option>
+                </select>
+
+                <div style="display:none">
+                    <input type="file" id="companyLogo" accept="image/*">
+                    <button type="button" id="removeLogo">Remover logo</button>
+                </div>
+                <div id="logoPreviewSmall" class="small-note"><span id="logoName"></span></div>
+
+                <input type="file" id="companyLogo" accept="image/*" style="display:none">
+                <div id="logoPreviewSmall" class="small-note"><span id="logoName"></span></div>
+
+                <label>Nome da Empresa / Contratada</label>
+                <input type="text" id="companyName" value="SOUZA E CAVALCATE ACM E VIDRO LTDA">
+
+                <label>CNPJ</label>
+                <input type="text" id="companyCNPJ" value="62.252.910/0001-19" maxlength="18">
+
+                <label>Endereço da Empresa</label>
+                <input type="text" id="companyAddress"
+                    value="Rua Santinho Veloso, Q32 LT012 ST - St. Pauzanes, Rio Verde - GO">
+
+                <label>Contato (Telefone / E-mail)</label>
+                <input type="text" id="companyContact" value="(64) 99268-8158 • reidoacmrv@gmail.com">
+
+                <hr>
+
+                <label>Dados do Contratante</label>
+                <input type="text" id="clientName" placeholder="Nome completo">
+
+                <label>CPF / CNPJ</label>
+                <input type="text" id="clientCPF" maxlength="18">
+
+                <label>Celular do Contratante</label>
+                <input type="text" id="clientPhone" maxlength="15">
+
+                <label>Endereço do Contratante</label>
+                <input type="text" id="clientAddress">
+
+                <hr>
+
+                <label>Data do Contrato</label>
+                <input type="date" id="contractDate">
+
+                <label>Previsão de Entrega</label>
+                <input type="date" id="deliveryForecast">
+
+                <hr>
+                <div>
+                    <label for="entryPerc">Entrada (%):</label>
+                    <input type="number" id="entryPerc" value="50" min="0" max="100">
+                </div>
+                <hr>
+
+                <label>Modo de Preços</label>
+                <select id="pricingMode">
+                    <option value="unit">Detalhado</option>
+                    <option value="total">Valor total</option>
+                </select>
+
+                <div class="items">
+                    <table id="itemsInputTable">
+                        <thead>
+                            <tr>
+                                <th>Descrição</th>
+                                <th style="width:80px">Qtd</th>
+                                <th style="width:80px">Unid</th>
+                                <th style="width:110px">Valor unit.</th>
+                                <th style="width:40px"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsTbody"></tbody>
+                    </table>
+                    <div style="margin-top:8px;display:flex;gap:8px">
+                        <button type="button" id="addItem">Adicionar item</button>
+                        <button type="button" id="clearItems" class="secondary">Limpar itens</button>
+                        <button type="button" id="clearItemFields" class="secondary">Limpar campos de itens</button>
+                    </div>
+                </div>
+
+                <hr>
+
+                <label>Nº do contrato</label>
+                <div id="contractNumber" class="muted-small" style="margin-top:6px">Carregando...</div>
+
+            </form>
+
+            <!-- PREVIEW -->
+            <div class="preview">
+                <div class="contract" id="contractPreview">
+                    <img id="watermark" src="/marca-dagua.png" alt="Marca d'água">
+
+                    <div class="header">
+                        <div id="logoPreview" class="logoBox">
+                            <img id="logoImg" src="/logo-rda.png"
+                                style="max-width:100%;max-height:70px;object-fit:contain" alt="logo" />
+                        </div>
+                        <div class="companyData">
+                            <div id="previewCompanyName" style="font-weight:700">SOUZA E CAVALCATE ACM E VIDRO LTDA
+                            </div>
+                            <div id="previewCNPJ" class="muted">CNPJ: 62.252.910/0001-19</div>
+                            <div id="previewCompanyAddr" class="muted">Rua Honório Leão, Q71 L04, Morada do Sol, Rio
+                                Verde - GO</div>
+                            <div id="previewCompanyContact" class="muted">(64)99268-8158 • reidoacmrv@gmail.com</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align:center; margin-bottom:10px;">
+                        <h1 style="margin:0;">CONTRATO DE PRESTAÇÃO DE SERVIÇOS POR EMPREITADA</h1>
+                        <div id="contractNumberPreview"
+                            style="font-size:14px; font-weight:normal; color:#444;margin-top:6px"></div>
+                    </div>
+
+                    <div id="previewImages" class="preview-images" aria-hidden="false"></div>
+
+                    <div class="section">
+                        <strong>CONTRATANTE</strong>
+                        <div>Nome: <span id="previewClientName"></span></div>
+                        <div><span id="previewClientCPF" class="muted"></span></div>
+                        <div id="previewClientPhoneRow" class="muted">Celular: <span id="previewClientPhone" class="muted"></span>
+                        </div>
+                        <div id="previewClientAddrRow" class="muted">Endereço: <span id="previewClientAddr" class="muted"></span>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <div class="section">
+                            <strong>CONTRATADO</strong>
+                            <div id="previewContractedText" class="muted">
+                                <span id="previewContractedName"></span>, pessoa jurídica de direito privado, inscrita
+                                no CNPJ sob o n.º <span id="previewContractedCNPJ"></span>, com sede em <span
+                                    id="previewContractedAddr"></span>, representada por seu representante legal Jeann
+                                Carlos Souza Faria.
+                            </div>
+                        </div>
+
+
+                        <div class="section">
+                            <strong>OBJETO</strong>
+                            <div id="objectIntro">É objeto do presente contrato a prestação dos serviços e fornecimento
+                                de:</div>
+
+                            <table class="itemsTable" id="previewItemsTable">
+                                <thead id="itemsTableHead"></thead>
+                                <tbody></tbody>
+                            </table>
+
+                            <div class="totals">
+                                <div>Subtotal: R$ <span id="previewSubtotal">0.00</span></div>
+                                <div>Entrada <span class="previewEntryPerc">50%</span>
+                                    : R$ <span id="previewEntrada">0.00</span></div>
+                                <div>Total: R$ <span id="previewTotal">0.00</span></div>
+                                <div id="previewDeliveryRow" class="small-text" style="display:none;">Previsão de
+                                    entrega: <span id="previewDelivery"></span></div>
+                                <div id="previewContractDurationRow" class="small-text" style="display:none;">Prazo de
+                                    duração da obra: <span id="previewDuration"></span></div>
+                            </div>
+                        </div>
+
+                        <div class="section pagamento">
+                            <strong>VALOR E FORMA DE PAGAMENTO</strong>
+                            <p>
+                                O preço total da obra, composta da mão-de-obra e materiais, é de
+                                <span id="previewTotalValue"></span>,
+                                sendo pago em <span class="previewEntryPerc">50%</span>
+                                de entrada e o restante na entrega
+                                da obra.
+                            </p>
+                        </div>
+
+
+                        <div class="section small">
+                            <strong>OBRIGAÇÕES DO CONTRATADO</strong>
+                            <div id="obligationsContracted" class="muted">
+                                1. Executar sob sua responsabilidade técnica, as obras relativas instalação de
+                                materiais.<br>
+                                2. Concluir as obras no prazo acordado, descontados os dias de paralisação por chuva ou
+                                força maior.<br>
+                                3. Entregar serviço conforme contratado.<br>
+                                4. Permitir livre acesso do contratante para fiscalização.<br>
+                                5. Manter piso e paredes conforme condições iniciais.
+                            </div>
+                        </div>
+
+                        <div class="section small">
+                            <strong>DAS OBRIGAÇÕES DO CONTRATANTE</strong>
+                            <div class="muted">
+                                1. Efetuar o pagamento nas datas pactuadas.<br>
+                                2. Fornecer condições para o bom andamento do serviço (energia, água, etc.).<br>
+                                3. Garantir que serviços correlatos (pintor, pedreiro) estejam concluídos quando
+                                necessário.
+                            </div>
+                        </div>
+
+                        <div class="section small">
+                            <strong>PENALIDADES</strong>
+                            <div class="muted">
+                                Estabelece os contratantes uma multa igual a 10% (dez por cento), incidentes sobre as
+                                parcelas de
+                                pagamento não quitado nos prazos estabelecidos a ser suportada pelo contratante em favor
+                                do
+                                contratado;
+                                Estabelece também os contratantes uma multa de 10% (dez por cento) sobre a parte da
+                                empreitada
+                                não cumprida, inclusive quanto aos prazos de entrega, a ser suportada pelo contratado em
+                                favor do
+                                contratante;
+                            </div>
+                        </div>
+
+                        <div class="section small no-break">
+                            <strong>RESCISÃO</strong>
+                            <div class="muted">O descumprimento do presente contrato por qualquer das partes, ou atraso
+                                no pagamento dos
+                                serviços ou atraso na entrega de qualquer das parcelas, pelo prazo de 10 (dez) dias,
+                                implica na
+                                rescisão automática do presente contrato, podendo a parte inocente postular da parte
+                                infratora o
+                                abatimento ou recebimento da multa.</div>
+                        </div>
+
+                        <div class="section small no-break">
+                            <strong>FORO DO CONTRATO</strong>
+                            <div class="muted">Para dirimir eventuais dúvidas originárias do presente contrato nomeia as
+                                partes o foro da comarca
+                                de Rio Verde - Goiás.
+                                E, por estar justo e contratado, nos termos reciprocamente outorgados e
+                                aceitos, mandaram lavrar o
+                                presente instrumento para que, assinado pelas partes e pelas testemunhas abaixo
+                                nomeadas,
+                                produza seus jurídicos e legais efeitos.
+                            </div>
+                        </div>
+
+                        <div class="sign">
+                            <div class="line"><strong>_________________________</strong><br>CONTRATANTE</div>
+                            <div class="line"><strong>________________________</strong><br>CONTRATADA</div>
+                        </div>
+
+                        <div class="section small">
+                            <div id="previewContractDate" class="muted"></div>
+                        </div>
+
+                        <footer class="note">© <span id="footerYear">2025</span> REI do ACM. Todos os direitos
+                            reservados.</footer>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+        <script>
+            // --- dados e utilitários ---
+            let items = [];
+            function toCurrency(v) { if (isNaN(v)) v = 0; return Number(v).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }
+
+            // --- render inputs de itens ---
+            function renderItemsInputs() {
+                const tbody = document.getElementById('itemsTbody'); tbody.innerHTML = '';
+                const mode = document.getElementById('pricingMode').value;
+                items.forEach((it, idx) => {
+                    const tr = document.createElement('tr');
+                    if (mode === 'unit') {
+                        tr.innerHTML = `<td><textarea data-idx="${idx}" data-field="desc">${it.desc || ''}</textarea></td>
+                <td><input type="number" min="0" data-idx="${idx}" data-field="qty" value="${it.qty || 1}" /></td>
+                <td><input type="text" data-idx="${idx}" data-field="unit" value="${it.unit || ''}" /></td>
+                <td><input type="number" min="0" step="0.01" data-idx="${idx}" data-field="price" value="${it.price || 0}" /></td>
+                <td><button type="button" data-idx="${idx}" class="removeItem">x</button></td>`;
+                    } else {
+                        tr.innerHTML = `<td><textarea data-idx="${idx}" data-field="desc">${it.desc || ''}</textarea></td>
+                <td colspan="2"></td>
+                <td><input type="number" min="0" step="0.01" data-idx="${idx}" data-field="total" value="${it.total || 0}" /></td>
+                <td><button type="button" data-idx="${idx}" class="removeItem">x</button></td>`;
+                    }
+                    tbody.appendChild(tr);
+                });
+
+                tbody.querySelectorAll('textarea,input').forEach(inp => {
+                    inp.addEventListener('input', e => {
+                        const idx = +e.target.dataset.idx; const f = e.target.dataset.field;
+                        if (f === 'qty') items[idx].qty = Number(e.target.value) || 0;
+                        else if (f === 'price') items[idx].price = Number(e.target.value) || 0;
+                        else if (f === 'total') items[idx].total = Number(e.target.value) || 0;
+                        else if (f === 'desc') items[idx].desc = e.target.value;
+                        else if (f === 'unit') items[idx].unit = e.target.value;
+                        updatePreview();
+                    });
+                });
+
+                tbody.querySelectorAll('.removeItem').forEach(btn => btn.addEventListener('click', () => { const idx = +btn.dataset.idx; items.splice(idx, 1); renderItemsInputs(); updatePreview() }));
+            }
+
+            // --- arquivo logo ---
+            // --- arquivo logo (logo fixo, sem escolher/remover) ---
+            const logoImg = document.getElementById('logoImg');
+            const logoName = document.getElementById('logoName');
+
+            // Mantém o logo padrão
+            logoImg.src = '/logo-rda.png';
+            logoName.textContent = '';
+
+            document.getElementById('removeLogo').addEventListener('click', () => { logoImg.src = '/logo-rda.png'; logoName.textContent = 'logo-rda.png'; companyLogoInput.value = ''; updatePreview(); });
+
+            // --- máscaras ---
+            document.getElementById('clientPhone').addEventListener('input', function (e) { let v = e.target.value.replace(/\D/g, ''); if (v.length > 0) { v = v.replace(/^(\d{2})(\d)/, '($1) $2'); v = v.replace(/(\d{5})(\d)/, '$1-$2'); } e.target.value = v.substring(0, 15); });
+
+            document.getElementById('clientCPF').addEventListener('input', function (e) { let v = e.target.value.replace(/\D/g, ''); if (v.length <= 11) { v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d)/, '$1.$2'); v = v.replace(/(\d{3})(\d{1,2})$/, '$1-$2'); } else { v = v.replace(/^(\d{2})(\d)/, '$1.$2'); v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3'); v = v.replace(/\.(\d{3})(\d)/, '.$1/$2'); v = v.replace(/(\d{4})(\d)/, '$1-$2'); } e.target.value = v; });
+
+            // --- atualizar preview ---
+            function updatePreview() {
+                // --- empresa ---
+                document.getElementById('previewCompanyName').textContent = document.getElementById('companyName').value || '';
+                document.getElementById('previewCNPJ').textContent = 'CNPJ: ' + (document.getElementById('companyCNPJ').value || '');
+                document.getElementById('previewCompanyAddr').textContent = document.getElementById('companyAddress').value || '';
+                document.getElementById('previewCompanyContact').textContent = document.getElementById('companyContact').value || '';
+
+                // --- contratante ---
+                document.getElementById('previewClientName').textContent = document.getElementById('clientName').value || '';
+                const cpfCnpjInput = document.getElementById('clientCPF').value || '';
+                const digits = cpfCnpjInput.replace(/\D/g, '');
+                let cpfCnpjLabel = 'CPF/CNPJ';
+                if (digits.length === 11) cpfCnpjLabel = 'CPF';
+                else if (digits.length === 14) cpfCnpjLabel = 'CNPJ';
+                document.getElementById('previewClientCPF').textContent = cpfCnpjInput ? `${cpfCnpjLabel}: ${cpfCnpjInput}` : '';
+
+                const phoneValue = document.getElementById('clientPhone').value.trim();
+                document.getElementById('previewClientPhone').textContent = phoneValue;
+                document.getElementById('previewClientPhoneRow').style.display = phoneValue ? '' : 'none';
+
+                const addrValue = document.getElementById('clientAddress').value.trim();
+                document.getElementById('previewClientAddr').textContent = addrValue;
+                document.getElementById('previewClientAddrRow').style.display = addrValue ? '' : 'none';
+
+                // --- contratado ---
+                document.getElementById('previewContractedName').textContent = document.getElementById('companyName').value || '';
+                document.getElementById('previewContractedCNPJ').textContent = document.getElementById('companyCNPJ').value || '';
+                document.getElementById('previewContractedAddr').textContent = document.getElementById('companyAddress').value || '';
+
+                // --- itens ---
+                const mode = document.getElementById('pricingMode').value;
+                const thead = document.getElementById('itemsTableHead');
+                if (mode === 'unit') thead.innerHTML = `<tr><th>Descrição</th><th>Qtd</th><th>Unid</th><th>Valor unit.</th><th>Subtotal</th></tr>`;
+                else thead.innerHTML = `<tr><th>Descrição</th><th colspan="4">Valor</th></tr>`;
+
+                const tbody = document.querySelector('#previewItemsTable tbody');
+                tbody.innerHTML = '';
+                let subtotal = 0;
+                items.forEach(it => {
+                    const tr = document.createElement('tr');
+                    if (mode === 'unit') {
+                        const st = (it.qty || 0) * (it.price || 0);
+                        subtotal += st;
+                        tr.innerHTML = `<td style="white-space:pre-line">${it.desc || ''}</td><td>${it.qty || ''}</td><td>${it.unit || ''}</td><td>${toCurrency(it.price || 0)}</td><td>${toCurrency(st)}</td>`;
+                    } else {
+                        subtotal += (it.total || 0);
+                        tr.innerHTML = `<td style="white-space:pre-line">${it.desc || ''}</td><td colspan="4">${toCurrency(it.total || 0)}</td>`;
+                    }
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('previewSubtotal').textContent = toCurrency(subtotal);
+
+                // --- entrada (%) com limite ---
+                const percInput = document.getElementById('entryPerc');
+                let perc = parseFloat(percInput.value) || 0;
+                if (perc < 0) perc = 0;
+                if (perc > 100) perc = 100;
+                percInput.value = perc;
+
+                document.querySelectorAll('.previewEntryPerc').forEach(el => el.textContent = perc + '%');
+
+                const entradaValue = subtotal * (perc / 100);
+                document.getElementById('previewEntrada').textContent = toCurrency(entradaValue);
+                document.getElementById('previewTotal').textContent = toCurrency(subtotal);
+
+                // --- cláusula VALOR E FORMA DE PAGAMENTO ---
+                document.getElementById('previewTotalValue').textContent = toCurrency(subtotal);
+
+                // --- datas ---
+                const deliveryInput = document.getElementById('deliveryForecast').value;
+                if (deliveryInput) {
+                    const d = new Date(deliveryInput);
+                    const opt = { year: 'numeric', month: 'long', day: 'numeric' };
+                    document.getElementById('previewDelivery').textContent = d.toLocaleDateString('pt-BR', opt);
+                    document.getElementById('previewDeliveryRow').style.display = '';
+                } else document.getElementById('previewDeliveryRow').style.display = 'none';
+
+                const contractDateVal = document.getElementById('contractDate').value;
+                const deliveryVal = document.getElementById('deliveryForecast').value;
+                if (contractDateVal && deliveryVal) {
+                    const cd = new Date(contractDateVal);
+                    const dd = new Date(deliveryVal);
+                    const diff = Math.ceil((dd - cd) / (1000 * 60 * 60 * 24));
+                    document.getElementById('previewDuration').textContent = `${diff} dias`;
+                    document.getElementById('previewContractDurationRow').style.display = '';
+                } else document.getElementById('previewContractDurationRow').style.display = 'none';
+
+                // --- unidade e data atual ---
+                const unit = document.getElementById('unitLocation').value;
+                const now = new Date();
+                const opt = { year: 'numeric', month: 'long', day: 'numeric' };
+                document.getElementById('previewContractDate').textContent = unit + ', ' + now.toLocaleDateString('pt-BR', opt);
+
+                // --- número do contrato ---
+                document.getElementById('contractNumberPreview').textContent = document.getElementById('contractNumber').textContent || '';
+            }
+
+
+            // --- botões e eventos ---
+            document.getElementById('addItem').addEventListener('click', () => { items.push({ desc: '', qty: 1, unit: '', price: 0 }); renderItemsInputs(); updatePreview(); });
+            document.getElementById('clearItems').addEventListener('click', () => { items = []; renderItemsInputs(); updatePreview(); });
+            document.getElementById('clearItemFields').addEventListener('click', () => { items = items.map(it => ({ desc: '', qty: 1, unit: it.unit || '', price: 0, total: 0 })); renderItemsInputs(); updatePreview(); });
+
+            document.getElementById('pricingMode').addEventListener('change', () => { renderItemsInputs(); updatePreview(); });
+            document.getElementById('form').addEventListener('input', updatePreview);
+
+            // reset geral
+            document.getElementById('btnReset').addEventListener('click', () => {
+                document.getElementById('clientName').value = ''; document.getElementById('clientCPF').value = ''; document.getElementById('clientAddress').value = ''; document.getElementById('clientPhone').value = '';
+                document.getElementById('unitLocation').selectedIndex = 0; // volta pra principal
+                // repopula dados da matriz automaticamente
+                applyUnitDefaults();
+
+                items = []; renderItemsInputs(); updatePreview();
+
+                // logo e imagens
+                document.getElementById('companyLogo').value = ''; document.getElementById('logoImg').src = '/logo-rda.png'; document.getElementById('logoName').textContent = 'logo-rda.png';
+
+                // limpa possíveis previews de imagens (se usasse)
+                const previewContainer = document.getElementById('previewImages'); if (previewContainer) previewContainer.innerHTML = '';
+            });
+
+            // exportar PDF
+            document.getElementById('btnPrint').addEventListener('click', () => {
+                const element = document.getElementById('contractPreview');
+                let clientName = document.getElementById('clientName').value.trim() || 'SemNome'; const parts = clientName.split(' ');
+                if (parts.length > 1) clientName = parts[0] + ' ' + parts[parts.length - 1]; else clientName = parts[0];
+                let contractNumberText = document.getElementById('contractNumber').textContent.trim(); contractNumberText = contractNumberText.replace(/\//g, '-');
+                const fileName = `Contrato - ${clientName} - ${contractNumberText}.pdf`;
+                html2pdf().set({ margin: 10, filename: fileName, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2, useCORS: true }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(element).save();
+            });
+
+            // --- imagens do projeto (mesma lógica do orçamento, opcional) ---
+            const projectInput = document.createElement('input'); projectInput.type = 'file'; projectInput.accept = 'image/*'; projectInput.multiple = true; projectInput.style.display = 'none'; document.body.appendChild(projectInput);
+            const previewContainer = document.getElementById('previewImages'); let selectedFiles = [];
+            projectInput.addEventListener('change', e => { const newFiles = Array.from(e.target.files || []); newFiles.forEach(f => { if (!selectedFiles.some(sf => sf.name === f.name && sf.size === f.size)) selectedFiles.push(f) }); renderFiles(); });
+            function renderFiles() { previewContainer.innerHTML = ''; selectedFiles.forEach(file => { if (file.type && file.type.startsWith('image/')) { const reader = new FileReader(); reader.onload = ev => { const img = document.createElement('img'); img.src = ev.target.result; img.style.maxWidth = '100%'; img.style.height = 'auto'; img.style.border = '1px solid #ddd'; img.style.borderRadius = '10px'; img.style.display = 'block'; previewContainer.appendChild(img) }; reader.readAsDataURL(file) } }) }
+
+            // --- gerar número do contrato (pode chamar um script externo) ---
+            async function getNextContractNumber() {
+                // tenta buscar de um endpoint (se disponível). Caso falhe, gera local.
+                try {
+                    const url = "https://script.google.com/macros/s/AKfycbyiU7ciKhaJdfJ0PYMUi6c6vVZev8Rq8NtEM7zwbBBfzY1YiE8VqE8BylYGOJQ1uX7EBQ/exec";
+                    const r = await fetch(url); if (!r.ok) throw new Error('no'); const d = await r.json(); const year = new Date().getFullYear(); return `Nº ${d.numero}/${year}`;
+                } catch (err) { const now = new Date(); const yy = now.getFullYear(); const serial = String(now.getTime()).slice(-6); return `Nº ${serial}/${yy}` }
+            }
+
+            // pega e coloca no elemento
+            async function loadContractNumber() { const el = document.getElementById('contractNumber'); el.textContent = 'Carregando...'; const n = await getNextContractNumber(); el.textContent = n; document.getElementById('contractNumberPreview').textContent = n; }
+
+            // --- aplicar defaults da unidade selecionada (prefill campos da empresa) ---
+            function applyUnitDefaults() { const sel = document.getElementById('unitLocation'); const opt = sel.options[sel.selectedIndex]; if (!opt) return; const name = opt.dataset.name || ''; const cnpj = opt.dataset.cnpj || ''; const addr = opt.dataset.address || ''; const contact = opt.dataset.contact || ''; document.getElementById('companyName').value = name; document.getElementById('companyCNPJ').value = cnpj; document.getElementById('companyAddress').value = addr; document.getElementById('companyContact').value = contact; updatePreview(); }
+            document.getElementById('unitLocation').addEventListener('change', applyUnitDefaults);
+
+            // --- quando carregar ---
+            document.addEventListener('DOMContentLoaded', async () => { await loadContractNumber(); applyUnitDefaults(); addSampleItems(); updatePreview(); document.getElementById('footerYear').textContent = new Date().getFullYear(); });
+
+            // --- helpers iniciais ---
+            function addSampleItems() { items = [{ desc: '01 logo luminoso em acrílico no formato de letra caixa, iluminado com módulos de led (inclui fonte e sensor). Medindo 3,60x2,90', qty: 1, unit: 'un', price: 9000 }, { desc: '01 logo em acrílico recortado', qty: 1, unit: 'un', price: 0 }]; renderItemsInputs(); }
+
+            // iniciar render
+            renderItemsInputs();
+
+        </script>
+</body>
+
+</html>
