@@ -390,16 +390,16 @@
 
                 <hr>
 
-                <label>Dados do Contratante</label>
+                <label>Dados do Cliente</label>
                 <input type="text" id="clientName" placeholder="Nome completo">
 
                 <label>CPF / CNPJ</label>
                 <input type="text" id="clientCPF" maxlength="18">
 
-                <label>Celular do Contratante</label>
+                <label>Celular do Cliente</label>
                 <input type="text" id="clientPhone" maxlength="15">
 
-                <label>Endereço do Contratante</label>
+                <label>Endereço do Cliente</label>
                 <input type="text" id="clientAddress">
 
                 <hr>
@@ -479,7 +479,7 @@
                     <div id="previewImages" class="preview-images" aria-hidden="false"></div>
 
                     <div class="section">
-                        <strong>CONTRATANTE</strong>
+                        <strong>Cliente</strong>
                         <div>Nome: <span id="previewClientName"></span></div>
                         <div><span id="previewClientCPF" class="muted"></span></div>
                         <div id="previewClientPhoneRow" class="muted">Celular: <span id="previewClientPhone"
@@ -544,13 +544,13 @@
                                 2. Concluir as obras no prazo acordado, descontados os dias de paralisação por chuva ou
                                 força maior.<br>
                                 3. Entregar serviço conforme contratado.<br>
-                                4. Permitir livre acesso do contratante para fiscalização.<br>
+                                4. Permitir livre acesso do Cliente para fiscalização.<br>
                                 5. Manter piso e paredes conforme condições iniciais.
                             </div>
                         </div>
 
                         <div class="section small">
-                            <strong>DAS OBRIGAÇÕES DO CONTRATANTE</strong>
+                            <strong>DAS OBRIGAÇÕES DO Cliente</strong>
                             <div class="muted">
                                 1. Efetuar o pagamento nas datas pactuadas.<br>
                                 2. Fornecer condições para o bom andamento do serviço (energia, água, etc.).<br>
@@ -562,16 +562,16 @@
                         <div class="section small">
                             <strong>PENALIDADES</strong>
                             <div class="muted">
-                                Estabelece os contratantes uma multa igual a 10% (dez por cento), incidentes sobre as
+                                Estabelece os Clientes uma multa igual a 10% (dez por cento), incidentes sobre as
                                 parcelas de
-                                pagamento não quitado nos prazos estabelecidos a ser suportada pelo contratante em favor
+                                pagamento não quitado nos prazos estabelecidos a ser suportada pelo Cliente em favor
                                 do
                                 contratado;
-                                Estabelece também os contratantes uma multa de 10% (dez por cento) sobre a parte da
+                                Estabelece também os Clientes uma multa de 10% (dez por cento) sobre a parte da
                                 empreitada
                                 não cumprida, inclusive quanto aos prazos de entrega, a ser suportada pelo contratado em
                                 favor do
-                                contratante;
+                                Cliente;
                             </div>
                         </div>
 
@@ -600,7 +600,7 @@
                         </div>
 
                         <div class="sign">
-                            <div class="line"><strong>_________________________</strong><br>CONTRATANTE</div>
+                            <div class="line"><strong>_________________________</strong><br>Cliente</div>
                             <div class="line"><strong>________________________</strong><br>CONTRATADA</div>
                         </div>
 
@@ -693,7 +693,7 @@
                 document.getElementById('previewCompanyAddr').textContent = document.getElementById('companyAddress').value || '';
                 document.getElementById('previewCompanyContact').textContent = document.getElementById('companyContact').value || '';
 
-                // --- contratante ---
+                // --- Cliente ---
                 document.getElementById('previewClientName').textContent = document.getElementById('clientName').value || '';
                 const cpfCnpjInput = document.getElementById('clientCPF').value || '';
                 const digits = cpfCnpjInput.replace(/\D/g, '');
@@ -853,4 +853,5 @@
 </body>
 
 </html>
+
 
