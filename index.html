@@ -411,11 +411,20 @@
                 <input type="date" id="deliveryForecast">
 
                 <hr>
+
+                <div class="form-group">
+                    <label for="warranty">Garantia</label>
+                    <input type="text" id="warranty" placeholder="Ex: 12 meses contra defeitos de fabricação" />
+                </div>
+
+                <hr>
+
                 <div>
                     <label for="entryPerc">Entrada (%):</label>
                     <input type="number" id="entryPerc" value="50" min="0" max="100">
                 </div>
                 <hr>
+
 
                 <label>Modo de Preços</label>
                 <select id="pricingMode">
@@ -535,6 +544,11 @@
                             </p>
                         </div>
 
+                        <!-- GARANTIA (estrutura idêntica às outras seções) -->
+                        <div id="previewWarrantyRow" class="section small" style="display:none;">
+                            <strong>GARANTIA</strong>
+                            <div id="previewWarrantyText" class="muted"></div>
+                        </div>
 
                         <div class="section small">
                             <strong>OBRIGAÇÕES DO CONTRATADO</strong>
@@ -772,6 +786,21 @@
                     document.getElementById('previewContractDurationRow').style.display = 'none';
                 }
 
+                // --- Garantia (preencher e exibir apenas se houver conteúdo)
+                const warrantyInput = document.getElementById('warranty'); // seu input no painel
+                const previewWarrantyRow = document.getElementById('previewWarrantyRow');
+                const previewWarrantyText = document.getElementById('previewWarrantyText');
+
+                if (previewWarrantyRow && previewWarrantyText) {
+                    const warrantyValue = (warrantyInput && warrantyInput.value) ? warrantyInput.value.trim() : '';
+                    if (warrantyValue) {
+                        previewWarrantyText.textContent = warrantyValue;
+                        previewWarrantyRow.style.display = ''; // deixa herdar display de .section
+                    } else {
+                        previewWarrantyRow.style.display = 'none';
+                        previewWarrantyText.textContent = '';
+                    }
+                }
 
                 // --- unidade e data atual ---
                 const unit = document.getElementById('unitLocation').value;
@@ -853,7 +882,3 @@
 </body>
 
 </html>
-
-
-
-
