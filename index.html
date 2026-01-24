@@ -423,6 +423,17 @@
                     <label for="entryPerc">Entrada (%):</label>
                     <input type="number" id="entryPerc" value="50" min="0" max="100">
                 </div>
+                
+                <div>
+                    <label>Forma de pagamento</label>
+                    <select id="paymentMethod">
+                        <option value="entrada_restante">Entrada + restante na entrega</option>
+                        <option value="entrada_parcelado">Entrada + restante parcelado no cartão</option>
+                        <option value="integral">Valor integral</option>
+                    </select>
+                    <input type="text" id="paymentMethodDetails" placeholder="Ex: 3x sem juros" style="margin-top:6px;display:none;width:95%">
+                </div>
+
                 <hr>
 
 
@@ -538,9 +549,7 @@
                             <p>
                                 O preço total da obra, composta da mão-de-obra e materiais, é de
                                 <span id="previewTotalValue"></span>,
-                                sendo pago em <span class="previewEntryPerc">50%</span>
-                                de entrada e o restante na entrega
-                                da obra.
+                                sendo pago <span id="previewPaymentMethodText"></span>.
                             </p>
                         </div>
 
@@ -769,6 +778,20 @@
                 // --- cláusula VALOR E FORMA DE PAGAMENTO ---
                 document.getElementById('previewTotalValue').textContent = toCurrency(subtotal);
 
+                // --- texto dinâmico para "Valor e forma de pagamento" ---
+                const paymentMethod = (document.getElementById('paymentMethod') && document.getElementById('paymentMethod').value) ? document.getElementById('paymentMethod').value : 'entrada_restante';
+                const paymentDetails = (document.getElementById('paymentMethodDetails') && document.getElementById('paymentMethodDetails').value) ? document.getElementById('paymentMethodDetails').value.trim() : '';
+                const pmEl = document.getElementById('previewPaymentMethodText');
+                let pmText = '';
+                if (paymentMethod === 'entrada_restante') {
+                    pmText = `em ${perc}% de entrada e o restante na entrega da obra`;
+                } else if (paymentMethod === 'entrada_parcelado') {
+                    pmText = paymentDetails ? `em ${perc}% de entrada e o restante parcelado no cartão de crédito: ${paymentDetails}` : `em ${perc}% de entrada e o restante parcelado no cartão de crédito`;
+                } else if (paymentMethod === 'integral') {
+                    pmText = 'o valor integral no ato do contrato';
+                }
+                if (pmEl) pmEl.textContent = pmText;
+
                 // --- Prazo da obra (em dias úteis) ---
                 const contractDateVal = document.getElementById('contractDate').value;
                 const deliveryVal = document.getElementById('deliveryForecast').value;
@@ -820,6 +843,19 @@
 
             document.getElementById('pricingMode').addEventListener('change', () => { renderItemsInputs(); updatePreview(); });
             document.getElementById('form').addEventListener('input', updatePreview);
+
+            // atualiza visibilidade e força preview quando a forma de pagamento mudar
+            const paymentMethodSelect = document.getElementById('paymentMethod');
+            if (paymentMethodSelect) {
+                paymentMethodSelect.addEventListener('change', (e) => {
+                    const showDetails = e.target.value === 'entrada_parcelado';
+                    const detailsInput = document.getElementById('paymentMethodDetails');
+                    if (detailsInput) detailsInput.style.display = showDetails ? '' : 'none';
+                    updatePreview();
+                });
+            }
+            const paymentMethodDetails = document.getElementById('paymentMethodDetails');
+            if (paymentMethodDetails) paymentMethodDetails.addEventListener('input', updatePreview);
 
             // reset geral
             document.getElementById('btnReset').addEventListener('click', () => {
