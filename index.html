@@ -37,7 +37,9 @@
             background: #fff;
             padding: 28px;
             border-radius: 6px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, .08)
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .08);
+            max-height: 90vh;
+            overflow-y: auto
         }
 
         .preview {
@@ -70,7 +72,7 @@
             border-radius: 4px;
             border: 1px solid #ccc;
             margin-top: 6px;
-            font-size: 14px
+            font-size: 14px;
         }
 
         textarea {
@@ -354,103 +356,127 @@
             <form class="panel" id="form">
                 <h2>Dados do Contrato</h2>
 
-                <label>Unidade emissora</label>
-                <select id="unitLocation">
-                    <option value="Rio Verde – Goiás" data-name="SOUZA E CAVALCANTE ACM E VIDRO LTDA"
-                        data-cnpj="62.252.910/0001-19"
-                        data-address="Rua Santinho Veloso, Q32 LT012 - St. Pauzanes, Rio Verde - GO"
-                        data-contact="(64) 99268-8158 • reidoacmrv@gmail.com">Rio Verde – Goiás (Matriz)</option>
-                    <option value="Quirinópolis – Goiás" data-name="SOUZA E CAVALCANTE ACM E VIDRO LTDA"
-                        data-cnpj="62.252.910/0001-19"
-                        data-address="Avenida Dom Pedro I, Nº 73, Centro, Quirinópolis - GO"
-                        data-contact="(64) 99243-9047 • reidoacmquirinopolis@gmail.com">Quirinópolis – Goiás (Filial)</option>
-                </select>
-
-                <div style="display:none">
-                    <input type="file" id="companyLogo" accept="image/*">
-                    <button type="button" id="removeLogo">Remover logo</button>
-                </div>
-                <div id="logoPreviewSmall" class="small-note"><span id="logoName"></span></div>
-
-                <input type="file" id="companyLogo" accept="image/*" style="display:none">
-                <div id="logoPreviewSmall" class="small-note"><span id="logoName"></span></div>
-
-                <label>Nome da Empresa / Contratada</label>
-                <input type="text" id="companyName" value="SOUZA E CAVALCANTE ACM E VIDRO LTDA">
-
-                <label>CNPJ</label>
-                <input type="text" id="companyCNPJ" value="62.252.910/0001-19" maxlength="18">
-
-                <label>Endereço da Empresa</label>
-                <input type="text" id="companyAddress"
-                    value="Rua Santinho Veloso, Q32 LT012 - St. Pauzanes, Rio Verde - GO">
-
-                <label>Contato (Telefone / E-mail)</label>
-                <input type="text" id="companyContact" value="(64) 99268-8158 • reidoacmrv@gmail.com">
-
-                <hr>
-
-                <label>Dados do Cliente</label>
-                <input type="text" id="clientName" placeholder="Nome completo">
-
-                <label>CPF / CNPJ</label>
-                <input type="text" id="clientCPF" maxlength="18">
-
-                <label>Celular do Cliente</label>
-                <input type="text" id="clientPhone" maxlength="15">
-
-                <label>Endereço do Cliente</label>
-                <input type="text" id="clientAddress">
-
-                <hr>
-
-                <label>Data do Contrato</label>
-                <input type="date" id="contractDate">
-
-                <label>Previsão de Entrega</label>
-                <input type="date" id="deliveryForecast">
-
-                <hr>
-
-                <div class="form-group">
-                    <label for="warranty">Garantia</label>
-                    <input type="text" id="warranty" placeholder="Ex: 12 meses contra defeitos de fabricação" />
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                    <label style="margin:0">Dados da Unidade Emissora</label>
+                    <button type="button" id="toggleUnitData" style="padding:4px 10px;font-size:12px;background:#666;border:none;color:#fff;border-radius:4px;cursor:pointer">−</button>
                 </div>
 
-                <hr>
-
-                <div>
-                    <label for="entryPerc">Entrada (%):</label>
-                    <input type="number" id="entryPerc" value="50" min="0" max="100">
-                </div>
-                
-                <div>
-                    <label>Forma de pagamento</label>
-                    <select id="paymentMethod">
-                        <option value="entrada_restante">Entrada + restante na entrega</option>
-                        <option value="entrada_parcelado">Entrada + restante parcelado no cartão</option>
-                        <option value="integral">Valor integral</option>
+                <div id="unitDataCollapse" style="transition:all 0.3s ease">
+                    <label>Unidade emissora</label>
+                    <select id="unitLocation">
+                        <option value="Rio Verde – Goiás" data-name="SOUZA E CAVALCANTE ACM E VIDRO LTDA"
+                            data-cnpj="62.252.910/0001-19"
+                            data-address="Rua Santinho Veloso, Q32 LT012 - St. Pauzanes, Rio Verde - GO"
+                            data-contact="(64) 99268-8158 • reidoacmrv@gmail.com">Rio Verde – Goiás (Matriz)</option>
+                        <option value="Quirinópolis – Goiás" data-name="SOUZA E CAVALCANTE ACM E VIDRO LTDA"
+                            data-cnpj="62.252.910/0001-19"
+                            data-address="Avenida Dom Pedro I, Nº 73, Centro, Quirinópolis - GO"
+                            data-contact="(64) 99243-9047 • reidoacmquirinopolis@gmail.com">Quirinópolis – Goiás (Filial)</option>
                     </select>
-                    <input type="text" id="paymentMethodDetails" placeholder="Ex: 3x sem juros" style="margin-top:6px;display:none;width:95%">
+
+                    <div style="display:none">
+                        <input type="file" id="companyLogo" accept="image/*">
+                        <button type="button" id="removeLogo">Remover logo</button>
+                    </div>
+                    <div id="logoPreviewSmall" class="small-note"><span id="logoName"></span></div>
+
+                    <input type="file" id="companyLogo" accept="image/*" style="display:none">
+                    <div id="logoPreviewSmall" class="small-note"><span id="logoName"></span></div>
+
+                    <label>Nome da Empresa / Contratada</label>
+                    <input type="text" id="companyName" value="SOUZA E CAVALCANTE ACM E VIDRO LTDA">
+
+                    <label>CNPJ</label>
+                    <input type="text" id="companyCNPJ" value="62.252.910/0001-19" maxlength="18">
+
+                    <label>Endereço da Empresa</label>
+                    <input type="text" id="companyAddress"
+                        value="Rua Santinho Veloso, Q32 LT012 - St. Pauzanes, Rio Verde - GO">
+
+                    <label>Contato (Telefone / E-mail)</label>
+                    <input type="text" id="companyContact" value="(64) 99268-8158 • reidoacmrv@gmail.com">
                 </div>
 
                 <hr>
 
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                    <label style="margin:0">Dados do Cliente</label>
+                    <button type="button" id="toggleClientData" style="padding:4px 10px;font-size:12px;background:#666;border:none;color:#fff;border-radius:4px;cursor:pointer">−</button>
+                </div>
 
-                <label>Modo de Preços</label>
-                <select id="pricingMode">
-                    <option value="unit">Detalhado</option>
-                    <option value="total">Valor total</option>
-                </select>
+                <div id="clientDataCollapse" style="transition:all 0.3s ease">
+                    <input type="text" id="clientName" placeholder="Nome completo">
 
-                <div class="items">
+                    <label>CPF / CNPJ</label>
+                    <input type="text" id="clientCPF" maxlength="18">
+
+                    <label>Celular do Cliente</label>
+                    <input type="text" id="clientPhone" maxlength="15">
+
+                    <label>Endereço do Cliente</label>
+                    <input type="text" id="clientAddress">
+                </div>
+
+                <hr>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                    <label style="margin:0">Dados da Entrega e Pagamento</label>
+                    <button type="button" id="togglePaymentData" style="padding:4px 10px;font-size:12px;background:#666;border:none;color:#fff;border-radius:4px;cursor:pointer">−</button>
+                </div>
+
+                <div id="paymentDataCollapse" style="transition:all 0.3s ease">
+                    <label>Data do Contrato</label>
+                    <input type="date" id="contractDate">
+
+                    <label>Previsão de Entrega</label>
+                    <input type="date" id="deliveryForecast">
+
+                    <hr>
+
+                    <div class="form-group">
+                        <label for="warranty">Garantia</label>
+                        <input type="text" id="warranty" placeholder="Ex: 12 meses contra defeitos de fabricação" />
+                    </div>
+
+                    <hr>
+
+                    <div>
+                        <label for="entryPerc">Entrada (%):</label>
+                        <input type="number" id="entryPerc" value="50" min="0" max="100">
+                    </div>
+                    
+                    <div>
+                        <label>Forma de pagamento</label>
+                        <select id="paymentMethod">
+                            <option value="entrada_restante">Entrada + restante na entrega</option>
+                            <option value="entrada_parcelado">Entrada + restante parcelado no cartão</option>
+                            <option value="integral">Valor integral</option>
+                        </select>
+                        <input type="text" id="paymentMethodDetails" placeholder="Ex: 3x sem juros" style="margin-top:6px;display:none;width:95%">
+                    </div>
+                </div>
+
+                <hr>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                    <label style="margin:0">Itens do Contrato</label>
+                    <button type="button" id="toggleItemsData" style="padding:4px 10px;font-size:12px;background:#666;border:none;color:#fff;border-radius:4px;cursor:pointer">−</button>
+                </div>
+
+                <div id="itemsDataCollapse" style="transition:all 0.3s ease">
+                    <label>Modo de Preços</label>
+                    <select id="pricingMode">
+                        <option value="unit">Detalhado</option>
+                        <option value="total">Valor total</option>
+                    </select>
+
+                    <div class="items">
                     <table id="itemsInputTable">
                         <thead>
                             <tr>
-                                <th style="width:1000px">Descrição</th>
-                                <th style="width:50px">Qtd</th>
-                                <th style="width:30px">Unid</th>
-                                <th style="width:150px">Valor unit.</th>
+                                <th style="width:2200px">Descrição</th>
+                                <th style="width:50px"></th>
+                                <th style="width:100px"></th>
                                 <th style="width:40px"></th>
                             </tr>
                         </thead>
@@ -462,11 +488,17 @@
                         <button type="button" id="clearItemFields" class="secondary">Limpar campos de itens</button>
                     </div>
                 </div>
+                </div>
 
                 <hr>
 
                 <label>Nº do contrato</label>
                 <div id="contractNumber" class="muted-small" style="margin-top:6px">Carregando...</div>
+
+                <hr>
+
+                <label>Penalidades</label>
+                <textarea id="penaltiesInput" placeholder="Digite as penalidades do contrato" style="height:80px">Estabelece os Clientes uma multa igual a 10% (dez por cento), incidentes sobre as parcelas de pagamento não quitado nos prazos estabelecidos a ser suportada pelo Cliente em favor do contratado; Estabelece também os Clientes uma multa de 10% (dez por cento) sobre a parte da empreitada não cumprida, inclusive quanto aos prazos de entrega, a ser suportada pelo contratado em favor do Cliente;</textarea>
 
             </form>
 
@@ -584,18 +616,7 @@
 
                         <div class="section small">
                             <strong>PENALIDADES</strong>
-                            <div class="muted">
-                                Estabelece os Clientes uma multa igual a 10% (dez por cento), incidentes sobre as
-                                parcelas de
-                                pagamento não quitado nos prazos estabelecidos a ser suportada pelo Cliente em favor
-                                do
-                                contratado;
-                                Estabelece também os Clientes uma multa de 10% (dez por cento) sobre a parte da
-                                empreitada
-                                não cumprida, de 20 a 30 dias após a liberação das medidas, a ser suportada pelo contratado em
-                                favor do
-                                Cliente;
-                            </div>
+                            <div id="previewPenalties" class="muted"></div>
                         </div>
 
                         <div class="section small no-break">
@@ -649,20 +670,24 @@
                 const tbody = document.getElementById('itemsTbody'); tbody.innerHTML = '';
                 const mode = document.getElementById('pricingMode').value;
                 items.forEach((it, idx) => {
-                    const tr = document.createElement('tr');
+                    const itemNum = String(idx + 1).padStart(2, '0');
+                    
+                    // Primeira linha: Descrição
+                    const tr1 = document.createElement('tr');
+                    tr1.innerHTML = `<td style="padding:4px"><textarea data-idx="${idx}" data-field="desc" style="width:100%;height:120px;padding:8px;box-sizing:border-box;border:1px solid #ccc;border-radius:4px;font-family:Arial,sans-serif;font-size:14px">${it.desc || ''}</textarea></td><td colspan="2" style="padding:4px"></td><td style="text-align:center;padding:4px"><button type="button" data-idx="${idx}" class="removeItem" style="padding:2px 5px;font-size:10px;min-width:24px">x</button></td>`;
+                    tbody.appendChild(tr1);
+                    
+                    // Segunda linha: Qtd, Valor unit.
+                    const tr2 = document.createElement('tr');
                     if (mode === 'unit') {
-                        tr.innerHTML = `<td><textarea data-idx="${idx}" data-field="desc">${it.desc || ''}</textarea></td>
-                <td><input type="number" min="0" data-idx="${idx}" data-field="qty" value="${it.qty || 1}" /></td>
-                <td><input type="text" data-idx="${idx}" data-field="unit" value="${it.unit || ''}" /></td>
-                <td><input type="number" min="0" step="0.01" data-idx="${idx}" data-field="price" value="${it.price || 0}" /></td>
-                <td><button type="button" data-idx="${idx}" class="removeItem">x</button></td>`;
+                        tr2.innerHTML = `<td style="padding:4px"><div style="display:flex;gap:20px;align-items:center">
+                            <div style="flex:0.7;text-align:center"><small style="color:#666;font-weight:bold">Quantidade</small><br><input type="number" min="0" data-idx="${idx}" data-field="qty" value="${it.qty || 1}" style="width:100%;padding:6px;border:1px solid #ccc;border-radius:4px;text-align:center;font-size:14px" /></div>
+                            <div style="flex:0.3;text-align:center"><small style="color:#666;font-weight:bold">Valor Unitário</small><br><input type="number" min="0" step="0.01" data-idx="${idx}" data-field="price" value="${it.price || 0}" style="width:100%;max-width:80px;padding:6px;border:1px solid #ccc;border-radius:4px;text-align:right;font-size:14px" /></div>
+                        </div></td><td colspan="2" style="padding:4px"></td><td style="padding:4px"></td>`;
                     } else {
-                        tr.innerHTML = `<td><textarea data-idx="${idx}" data-field="desc">${it.desc || ''}</textarea></td>
-                <td colspan="2"></td>
-                <td><input type="number" min="0" step="0.01" data-idx="${idx}" data-field="total" value="${it.total || 0}" /></td>
-                <td><button type="button" data-idx="${idx}" class="removeItem">x</button></td>`;
+                        tr2.innerHTML = `<td style="padding:4px"><div style="display:flex;justify-content:flex-end"><div style="text-align:center"><small style="color:#666;font-weight:bold">Valor</small><br><input type="number" min="0" step="0.01" data-idx="${idx}" data-field="total" value="${it.total || 0}" style="width:200px;padding:6px;border:1px solid #ccc;border-radius:4px;text-align:right;font-size:14px" /></div></div></td><td colspan="2" style="padding:4px"></td><td style="padding:4px"></td>`;
                     }
-                    tbody.appendChild(tr);
+                    tbody.appendChild(tr2);
                 });
 
                 tbody.querySelectorAll('textarea,input').forEach(inp => {
@@ -672,7 +697,6 @@
                         else if (f === 'price') items[idx].price = Number(e.target.value) || 0;
                         else if (f === 'total') items[idx].total = Number(e.target.value) || 0;
                         else if (f === 'desc') items[idx].desc = e.target.value;
-                        else if (f === 'unit') items[idx].unit = e.target.value;
                         updatePreview();
                     });
                 });
@@ -741,21 +765,22 @@
                 // --- itens ---
                 const mode = document.getElementById('pricingMode').value;
                 const thead = document.getElementById('itemsTableHead');
-                if (mode === 'unit') thead.innerHTML = `<tr><th>Descrição</th><th>Qtd</th><th>Unid</th><th>Valor unit.</th><th>Subtotal</th></tr>`;
-                else thead.innerHTML = `<tr><th>Descrição</th><th colspan="4">Valor</th></tr>`;
+                if (mode === 'unit') thead.innerHTML = `<tr><th>Item</th><th>Descrição</th><th>Quantidade</th><th>Valor Unitário</th><th>Subtotal</th></tr>`;
+                else thead.innerHTML = `<tr><th>Descrição</th><th colspan="3">Valor</th></tr>`;
 
                 const tbody = document.querySelector('#previewItemsTable tbody');
                 tbody.innerHTML = '';
                 let subtotal = 0;
-                items.forEach(it => {
+                items.forEach((it, idx) => {
                     const tr = document.createElement('tr');
+                    const itemNum = String(idx + 1).padStart(2, '0');
                     if (mode === 'unit') {
                         const st = (it.qty || 0) * (it.price || 0);
                         subtotal += st;
-                        tr.innerHTML = `<td style="white-space:pre-line">${it.desc || ''}</td><td>${it.qty || ''}</td><td>${it.unit || ''}</td><td>${toCurrency(it.price || 0)}</td><td>${toCurrency(st)}</td>`;
+                        tr.innerHTML = `<td>${itemNum}</td><td style="white-space:pre-line">${it.desc || ''}</td><td>${it.qty || ''}</td><td>${toCurrency(it.price || 0)}</td><td>${toCurrency(st)}</td>`;
                     } else {
                         subtotal += (it.total || 0);
-                        tr.innerHTML = `<td style="white-space:pre-line">${it.desc || ''}</td><td colspan="4">${toCurrency(it.total || 0)}</td>`;
+                        tr.innerHTML = `<td style="white-space:pre-line">${it.desc || ''}</td><td colspan="3">${toCurrency(it.total || 0)}</td>`;
                     }
                     tbody.appendChild(tr);
                 });
@@ -823,6 +848,13 @@
                         previewWarrantyRow.style.display = 'none';
                         previewWarrantyText.textContent = '';
                     }
+                }
+
+                // --- Penalidades (atualizar conteúdo dinâmico) ---
+                const penaltiesInput = document.getElementById('penaltiesInput');
+                const previewPenalties = document.getElementById('previewPenalties');
+                if (previewPenalties && penaltiesInput) {
+                    previewPenalties.textContent = penaltiesInput.value.trim();
                 }
 
                 // --- unidade e data atual ---
@@ -904,6 +936,82 @@
             // --- aplicar defaults da unidade selecionada (prefill campos da empresa) ---
             function applyUnitDefaults() { const sel = document.getElementById('unitLocation'); const opt = sel.options[sel.selectedIndex]; if (!opt) return; const name = opt.dataset.name || ''; const cnpj = opt.dataset.cnpj || ''; const addr = opt.dataset.address || ''; const contact = opt.dataset.contact || ''; document.getElementById('companyName').value = name; document.getElementById('companyCNPJ').value = cnpj; document.getElementById('companyAddress').value = addr; document.getElementById('companyContact').value = contact; updatePreview(); }
             document.getElementById('unitLocation').addEventListener('change', applyUnitDefaults);
+
+            // --- minimizador de dados da unidade emissora ---
+            const toggleBtn = document.getElementById('toggleUnitData');
+            const unitDataDiv = document.getElementById('unitDataCollapse');
+            let isExpanded = true;
+
+            toggleBtn.addEventListener('click', () => {
+                isExpanded = !isExpanded;
+                if (isExpanded) {
+                    unitDataDiv.style.display = '';
+                    unitDataDiv.style.maxHeight = '1000px';
+                    unitDataDiv.style.overflow = 'hidden';
+                    toggleBtn.textContent = '−';
+                } else {
+                    unitDataDiv.style.maxHeight = '0px';
+                    unitDataDiv.style.overflow = 'hidden';
+                    toggleBtn.textContent = '+';
+                }
+            });
+
+            // --- minimizador de dados do cliente ---
+            const toggleClientBtn = document.getElementById('toggleClientData');
+            const clientDataDiv = document.getElementById('clientDataCollapse');
+            let isClientExpanded = true;
+
+            toggleClientBtn.addEventListener('click', () => {
+                isClientExpanded = !isClientExpanded;
+                if (isClientExpanded) {
+                    clientDataDiv.style.display = '';
+                    clientDataDiv.style.maxHeight = '1000px';
+                    clientDataDiv.style.overflow = 'hidden';
+                    toggleClientBtn.textContent = '−';
+                } else {
+                    clientDataDiv.style.maxHeight = '0px';
+                    clientDataDiv.style.overflow = 'hidden';
+                    toggleClientBtn.textContent = '+';
+                }
+            });
+
+            // --- minimizador de dados de entrega e pagamento ---
+            const togglePaymentBtn = document.getElementById('togglePaymentData');
+            const paymentDataDiv = document.getElementById('paymentDataCollapse');
+            let isPaymentExpanded = true;
+
+            togglePaymentBtn.addEventListener('click', () => {
+                isPaymentExpanded = !isPaymentExpanded;
+                if (isPaymentExpanded) {
+                    paymentDataDiv.style.display = '';
+                    paymentDataDiv.style.maxHeight = '1500px';
+                    paymentDataDiv.style.overflow = 'hidden';
+                    togglePaymentBtn.textContent = '−';
+                } else {
+                    paymentDataDiv.style.maxHeight = '0px';
+                    paymentDataDiv.style.overflow = 'hidden';
+                    togglePaymentBtn.textContent = '+';
+                }
+            });
+
+            // --- minimizador de itens do contrato ---
+            const toggleItemsBtn = document.getElementById('toggleItemsData');
+            const itemsDataDiv = document.getElementById('itemsDataCollapse');
+            let isItemsExpanded = true;
+
+            toggleItemsBtn.addEventListener('click', () => {
+                isItemsExpanded = !isItemsExpanded;
+                if (isItemsExpanded) {
+                    itemsDataDiv.style.display = '';
+                    itemsDataDiv.style.maxHeight = '2000px';
+                    itemsDataDiv.style.overflow = 'hidden';
+                    toggleItemsBtn.textContent = '−';
+                } else {
+                    itemsDataDiv.style.maxHeight = '0px';
+                    itemsDataDiv.style.overflow = 'hidden';
+                    toggleItemsBtn.textContent = '+';
+                }
+            });
 
             // --- quando carregar ---
             document.addEventListener('DOMContentLoaded', async () => { await loadContractNumber(); applyUnitDefaults(); addSampleItems(); updatePreview(); document.getElementById('footerYear').textContent = new Date().getFullYear(); });
