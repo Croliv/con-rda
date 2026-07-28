@@ -459,8 +459,10 @@
                             <option value="entrada_restante">Entrada + restante na entrega</option>
                             <option value="entrada_parcelado">Entrada + restante parcelado no cartão</option>
                             <option value="integral">Valor integral</option>
+                            <option value="total_parcelado">Valor total parcelado no cartão de crédito</option>
                         </select>
                         <input type="text" id="paymentMethodDetails" placeholder="Ex: 3x sem juros" style="margin-top:6px;display:none;width:95%">
+                        <input type="number" id="paymentInstallments" min="1" step="1" placeholder="Quantas vezes?" style="margin-top:6px;display:none;width:95%">
                     </div>
                 </div>
 
@@ -815,6 +817,7 @@
                 // --- texto dinâmico para "Valor e forma de pagamento" ---
                 const paymentMethod = (document.getElementById('paymentMethod') && document.getElementById('paymentMethod').value) ? document.getElementById('paymentMethod').value : 'entrada_restante';
                 const paymentDetails = (document.getElementById('paymentMethodDetails') && document.getElementById('paymentMethodDetails').value) ? document.getElementById('paymentMethodDetails').value.trim() : '';
+                const paymentInstallments = (document.getElementById('paymentInstallments') && document.getElementById('paymentInstallments').value) ? document.getElementById('paymentInstallments').value.trim() : '';
                 const pmEl = document.getElementById('previewPaymentMethodText');
                 let pmText = '';
                 if (paymentMethod === 'entrada_restante') {
@@ -823,6 +826,8 @@
                     pmText = paymentDetails ? `em ${perc}% de entrada e o restante parcelado no cartão de crédito: ${paymentDetails}` : `em ${perc}% de entrada e o restante parcelado no cartão de crédito`;
                 } else if (paymentMethod === 'integral') {
                     pmText = 'o valor integral no ato do contrato';
+                } else if (paymentMethod === 'total_parcelado') {
+                    pmText = paymentInstallments ? `parcelado no cartão de crédito em ${paymentInstallments}x` : 'parcelado no cartão de crédito';
                 }
                 if (pmEl) pmEl.textContent = pmText;
 
@@ -899,13 +904,18 @@
             if (paymentMethodSelect) {
                 paymentMethodSelect.addEventListener('change', (e) => {
                     const showDetails = e.target.value === 'entrada_parcelado';
+                    const showInstallments = e.target.value === 'total_parcelado';
                     const detailsInput = document.getElementById('paymentMethodDetails');
+                    const installmentsInput = document.getElementById('paymentInstallments');
                     if (detailsInput) detailsInput.style.display = showDetails ? '' : 'none';
+                    if (installmentsInput) installmentsInput.style.display = showInstallments ? '' : 'none';
                     updatePreview();
                 });
             }
             const paymentMethodDetails = document.getElementById('paymentMethodDetails');
             if (paymentMethodDetails) paymentMethodDetails.addEventListener('input', updatePreview);
+            const paymentInstallments = document.getElementById('paymentInstallments');
+            if (paymentInstallments) paymentInstallments.addEventListener('input', updatePreview);
 
             // reset geral
             document.getElementById('btnReset').addEventListener('click', () => {
