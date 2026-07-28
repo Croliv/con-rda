@@ -431,6 +431,14 @@
                     <label>Previsão de Entrega</label>
                     <input type="date" id="deliveryForecast">
 
+                    <div style="margin-top:8px;">
+                        <label for="showDeliveryDate" style="margin-top:0;">Exibir data no contrato?</label>
+                        <select id="showDeliveryDate">
+                            <option value="sim">Sim</option>
+                            <option value="nao">Não</option>
+                        </select>
+                    </div>
+
                     <hr>
 
                     <div class="form-group">
@@ -569,8 +577,9 @@
                                 <div>Entrada <span class="previewEntryPerc">50%</span>
                                     : R$ <span id="previewEntrada">0.00</span></div>
                                 <div>Total: R$ <span id="previewTotal">0.00</span></div>
-                                <div id="previewDeliveryRow" class="small-text" style="display:none;">Previsão de
-                                    entrega: <span id="previewDelivery"></span></div>
+                                <div id="previewDeliveryRow" class="small-text" style="display:none;font-weight:700;color:#222;">
+                                    Previsão de Entrega <span id="previewDelivery"></span>
+                                </div>
                                 <div id="previewContractDurationRow" class="small-text" style="display:none;">Prazo de
                                     duração da obra: <span id="previewDuration"></span></div>
                             </div>
@@ -820,13 +829,22 @@
                 // --- Prazo da obra (em dias úteis) ---
                 const contractDateVal = document.getElementById('contractDate').value;
                 const deliveryVal = document.getElementById('deliveryForecast').value;
+                const showDeliveryDate = document.getElementById('showDeliveryDate').value;
 
-                // Oculta sempre o campo de previsão de entrega
-                document.getElementById('previewDeliveryRow').style.display = 'none';
+                const previewDeliveryRow = document.getElementById('previewDeliveryRow');
+                const previewDelivery = document.getElementById('previewDelivery');
+                previewDeliveryRow.style.display = 'none';
+                previewDelivery.textContent = '';
+
+                if (deliveryVal && showDeliveryDate === 'sim') {
+                    const dd = new Date(deliveryVal + 'T00:00:00');
+                    previewDelivery.textContent = dd.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+                    previewDeliveryRow.style.display = '';
+                }
 
                 if (contractDateVal && deliveryVal) {
-                    const cd = new Date(contractDateVal);
-                    const dd = new Date(deliveryVal);
+                    const cd = new Date(contractDateVal + 'T00:00:00');
+                    const dd = new Date(deliveryVal + 'T00:00:00');
                     const diff = calcularDiasUteis(cd, dd);
                     document.getElementById('previewDuration').textContent = `${diff} dias úteis`;
                     document.getElementById('previewContractDurationRow').style.display = '';
