@@ -358,10 +358,10 @@
 
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
                     <label style="margin:0">Dados da Unidade Emissora</label>
-                    <button type="button" id="toggleUnitData" style="padding:4px 10px;font-size:12px;background:#666;border:none;color:#fff;border-radius:4px;cursor:pointer">−</button>
+                    <button type="button" id="toggleUnitData" style="padding:4px 10px;font-size:12px;background:#666;border:none;color:#fff;border-radius:4px;cursor:pointer">+</button>
                 </div>
 
-                <div id="unitDataCollapse" style="transition:all 0.3s ease">
+                <div id="unitDataCollapse" style="transition:all 0.3s ease;max-height:0;overflow:hidden">
                     <label>Unidade emissora</label>
                     <select id="unitLocation">
                         <option value="Rio Verde – Goiás" data-name="SOUZA E CAVALCANTE ACM E VIDRO LTDA"
@@ -421,10 +421,10 @@
 
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
                     <label style="margin:0">Dados da Entrega e Pagamento</label>
-                    <button type="button" id="togglePaymentData" style="padding:4px 10px;font-size:12px;background:#666;border:none;color:#fff;border-radius:4px;cursor:pointer">−</button>
+                    <button type="button" id="togglePaymentData" style="padding:4px 10px;font-size:12px;background:#666;border:none;color:#fff;border-radius:4px;cursor:pointer">+</button>
                 </div>
 
-                <div id="paymentDataCollapse" style="transition:all 0.3s ease">
+                <div id="paymentDataCollapse" style="transition:all 0.3s ease;max-height:0;overflow:hidden">
                     <label>Data do Contrato</label>
                     <input type="date" id="contractDate">
 
@@ -476,8 +476,8 @@
                 <div id="itemsDataCollapse" style="transition:all 0.3s ease">
                     <label>Modo de Preços</label>
                     <select id="pricingMode">
+                        <option value="total" selected>Valor total</option>
                         <option value="unit">Detalhado</option>
-                        <option value="total">Valor total</option>
                     </select>
 
                     <div class="items">
@@ -978,7 +978,7 @@
             // --- minimizador de dados da unidade emissora ---
             const toggleBtn = document.getElementById('toggleUnitData');
             const unitDataDiv = document.getElementById('unitDataCollapse');
-            let isExpanded = true;
+            let isExpanded = false;
 
             toggleBtn.addEventListener('click', () => {
                 isExpanded = !isExpanded;
@@ -1016,7 +1016,7 @@
             // --- minimizador de dados de entrega e pagamento ---
             const togglePaymentBtn = document.getElementById('togglePaymentData');
             const paymentDataDiv = document.getElementById('paymentDataCollapse');
-            let isPaymentExpanded = true;
+            let isPaymentExpanded = false;
 
             togglePaymentBtn.addEventListener('click', () => {
                 isPaymentExpanded = !isPaymentExpanded;
@@ -1055,7 +1055,7 @@
             document.addEventListener('DOMContentLoaded', async () => { await loadContractNumber(); applyUnitDefaults(); addSampleItems(); updatePreview(); document.getElementById('footerYear').textContent = new Date().getFullYear(); });
 
             // --- helpers iniciais ---
-            function addSampleItems() { items = [{ desc: '01 logo luminoso em acrílico no formato de letra caixa, iluminado com módulos de led (inclui fonte e sensor). Medindo 3,60x2,90', qty: 1, unit: 'un', price: 9000 }, { desc: '01 logo em acrílico recortado', qty: 1, unit: 'un', price: 0 }]; renderItemsInputs(); }
+            function addSampleItems() { items = [{ desc: '', qty: 1, unit: 'un', price: 0 }]; renderItemsInputs(); }
 
             // iniciar render
             renderItemsInputs();
