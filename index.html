@@ -183,7 +183,7 @@
 
         .section {
             margin: 10px 0;
-            font-size: 14px
+            font-size: 13px
         }
 
         .section.pagamento p {
@@ -449,8 +449,15 @@
                     <hr>
 
                     <div>
-                        <label for="entryPerc">Entrada (%):</label>
-                        <input type="number" id="entryPerc" value="50" min="0" max="100">
+                        <label for="entryType">Tipo de entrada:</label>
+                        <select id="entryType">
+                            <option value="percentage">Percentual (%)</option>
+                            <option value="value">Valor (R$)</option>
+                        </select>
+                        <label for="entryPerc" id="entryPercLabel" style="margin-top:6px;">Entrada (%):</label>
+                        <input type="number" id="entryPerc" value="50" min="0" max="100" step="any" inputmode="decimal">
+                        <label for="entryValue" id="entryValueLabel" style="display:none;margin-top:6px;">Entrada (R$):</label>
+                        <input type="number" id="entryValue" min="0" step="any" inputmode="decimal" placeholder="Ex: 1.500,00" style="display:none;">
                     </div>
                     
                     <div>
@@ -474,7 +481,7 @@
                 </div>
 
                 <div id="itemsDataCollapse" style="transition:all 0.3s ease">
-                    <label>Modo de orçamento</label>
+                    <label>Modo de Preços</label>
                     <select id="pricingMode">
                         <option value="total" selected>Valor total</option>
                         <option value="unit">Detalhado</option>
@@ -576,8 +583,7 @@
 
                             <div class="totals">
                                 <div>Subtotal: R$ <span id="previewSubtotal">0.00</span></div>
-                                <div>Entrada <span class="previewEntryPerc">50%</span>
-                                    : R$ <span id="previewEntrada">0.00</span></div>
+                                <div>Entrada: R$ <span id="previewEntrada">0.00</span></div>
                                 <div>Total: R$ <span id="previewTotal">0.00</span></div>
                                 <div id="previewDeliveryRow" class="small-text" style="display:none;font-weight:700;color:#222;">
                                     Previsão de Entrega <span id="previewDelivery"></span>
@@ -808,16 +814,32 @@
 
                 document.getElementById('previewSubtotal').textContent = toCurrency(subtotal);
 
-                // --- entrada (%) com limite ---
+                // --- entrada por percentual ou valor fixo ---
+                const entryType = document.getElementById('entryType').value;
                 const percInput = document.getElementById('entryPerc');
-                let perc = parseFloat(percInput.value) || 0;
-                if (perc < 0) perc = 0;
-                if (perc > 100) perc = 100;
-                percInput.value = perc;
+                const entryValueInput = document.getElementById('entryValue');
+                let perc = parseFloat(percInput.value.replace(',', '.')) || 0;
+                let entradaValue;
+                let entryLabel;
+                if (entryType === 'value') {
+                    entradaValue = parseFloat(entryValueInput.value.replace(',', '.')) || 0;
+                    entradaValue = Math.max(0, Math.min(subtotal, entradaValue));
+                    perc = subtotal ? (entradaValue / subtotal) * 100 : 0;
+                    entryLabel = `R$ ${toCurrency(entradaValue)}`;
+                } else {
+                    if (perc < 0) {
+                        perc = 0;
+                        percInput.value = perc;
+                    } else if (perc > 100) {
+                        perc = 100;
+                        percInput.value = perc;
+                    }
+                    entradaValue = subtotal * (perc / 100);
+                    entryLabel = perc + '%';
+                }
 
-                document.querySelectorAll('.previewEntryPerc').forEach(el => el.textContent = perc + '%');
+                document.querySelectorAll('.previewEntryPerc').forEach(el => el.textContent = entryLabel);
 
-                const entradaValue = subtotal * (perc / 100);
                 document.getElementById('previewEntrada').textContent = toCurrency(entradaValue);
                 document.getElementById('previewTotal').textContent = toCurrency(subtotal);
 
@@ -831,9 +853,9 @@
                 const pmEl = document.getElementById('previewPaymentMethodText');
                 let pmText = '';
                 if (paymentMethod === 'entrada_restante') {
-                    pmText = `em ${perc}% de entrada e o restante na entrega da obra`;
+                    pmText = `em ${entryLabel} de entrada e o restante na entrega da obra`;
                 } else if (paymentMethod === 'entrada_parcelado') {
-                    pmText = paymentDetails ? `em ${perc}% de entrada e o restante parcelado no cartão de crédito: ${paymentDetails}` : `em ${perc}% de entrada e o restante parcelado no cartão de crédito`;
+                    pmText = paymentDetails ? `em ${entryLabel} de entrada e o restante parcelado no cartão de crédito: ${paymentDetails}` : `em ${entryLabel} de entrada e o restante parcelado no cartão de crédito`;
                 } else if (paymentMethod === 'integral') {
                     pmText = 'o valor integral no ato do contrato';
                 } else if (paymentMethod === 'total_parcelado') {
@@ -908,6 +930,18 @@
 
             document.getElementById('pricingMode').addEventListener('change', () => { renderItemsInputs(); updatePreview(); });
             document.getElementById('form').addEventListener('input', updatePreview);
+
+            const entryTypeSelect = document.getElementById('entryType');
+            if (entryTypeSelect) {
+                entryTypeSelect.addEventListener('change', (e) => {
+                    const isValue = e.target.value === 'value';
+                    document.getElementById('entryPercLabel').style.display = isValue ? 'none' : '';
+                    document.getElementById('entryPerc').style.display = isValue ? 'none' : '';
+                    document.getElementById('entryValueLabel').style.display = isValue ? '' : 'none';
+                    document.getElementById('entryValue').style.display = isValue ? '' : 'none';
+                    updatePreview();
+                });
+            }
 
             // atualiza visibilidade e força preview quando a forma de pagamento mudar
             const paymentMethodSelect = document.getElementById('paymentMethod');
