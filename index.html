@@ -467,9 +467,11 @@
                             <option value="entrada_parcelado">Entrada + restante parcelado no cartão</option>
                             <option value="integral">Valor integral</option>
                             <option value="total_parcelado">Valor total parcelado no cartão de crédito</option>
+                            <option value="personalizado">Personalizada</option>
                         </select>
                         <input type="text" id="paymentMethodDetails" placeholder="Ex: 3x sem juros" style="margin-top:6px;display:none;width:95%">
                         <input type="number" id="paymentInstallments" min="1" step="1" placeholder="Quantas vezes?" style="margin-top:6px;display:none;width:95%">
+                        <input type="text" id="customPaymentMethod" placeholder="Digite a forma de pagamento" style="margin-top:6px;display:none;width:95%">
                     </div>
                 </div>
 
@@ -850,6 +852,7 @@
                 const paymentMethod = (document.getElementById('paymentMethod') && document.getElementById('paymentMethod').value) ? document.getElementById('paymentMethod').value : 'entrada_restante';
                 const paymentDetails = (document.getElementById('paymentMethodDetails') && document.getElementById('paymentMethodDetails').value) ? document.getElementById('paymentMethodDetails').value.trim() : '';
                 const paymentInstallments = (document.getElementById('paymentInstallments') && document.getElementById('paymentInstallments').value) ? document.getElementById('paymentInstallments').value.trim() : '';
+                const customPaymentMethod = document.getElementById('customPaymentMethod').value.trim();
                 const pmEl = document.getElementById('previewPaymentMethodText');
                 let pmText = '';
                 if (paymentMethod === 'entrada_restante') {
@@ -860,6 +863,8 @@
                     pmText = 'o valor integral no ato do contrato';
                 } else if (paymentMethod === 'total_parcelado') {
                     pmText = paymentInstallments ? `parcelado no cartão de crédito em ${paymentInstallments}x` : 'parcelado no cartão de crédito';
+                } else if (paymentMethod === 'personalizado') {
+                    pmText = customPaymentMethod || 'a definir';
                 }
                 if (pmEl) pmEl.textContent = pmText;
 
@@ -949,10 +954,13 @@
                 paymentMethodSelect.addEventListener('change', (e) => {
                     const showDetails = e.target.value === 'entrada_parcelado';
                     const showInstallments = e.target.value === 'total_parcelado';
+                    const showCustomMethod = e.target.value === 'personalizado';
                     const detailsInput = document.getElementById('paymentMethodDetails');
                     const installmentsInput = document.getElementById('paymentInstallments');
+                    const customMethodInput = document.getElementById('customPaymentMethod');
                     if (detailsInput) detailsInput.style.display = showDetails ? '' : 'none';
                     if (installmentsInput) installmentsInput.style.display = showInstallments ? '' : 'none';
+                    if (customMethodInput) customMethodInput.style.display = showCustomMethod ? '' : 'none';
                     updatePreview();
                 });
             }
@@ -960,6 +968,8 @@
             if (paymentMethodDetails) paymentMethodDetails.addEventListener('input', updatePreview);
             const paymentInstallments = document.getElementById('paymentInstallments');
             if (paymentInstallments) paymentInstallments.addEventListener('input', updatePreview);
+            const customPaymentMethod = document.getElementById('customPaymentMethod');
+            if (customPaymentMethod) customPaymentMethod.addEventListener('input', updatePreview);
 
             // reset geral
             document.getElementById('btnReset').addEventListener('click', () => {
